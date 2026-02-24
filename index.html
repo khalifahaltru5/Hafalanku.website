@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hafalanku - Platform Hafalan Al-Qur'an</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --emerald-deep: #0D5C46;
+            --emerald: #10B981;
+            --emerald-dark: #064E3B;
+            --gold: #D4AF37;
+            --gold-light: #F5D061;
+            --gold-dark: #B8860B;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background: #F8FAFC; color: #1F2937; overflow-x: hidden; }
+        .font-arabic { font-family: 'Amiri', serif; }
+        .font-display { font-family: 'Amiri', serif; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #F3F4F6; }
+        ::-webkit-scrollbar-thumb { background: var(--emerald-deep); border-radius: 4px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideLeft { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes wave { 0%, 100% { height: 4px; } 50% { height: 20px; } }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .animate-slide-up { animation: slideUp 0.6s ease-out forwards; }
+        .animate-slide-down { animation: slideDown 0.6s ease-out forwards; }
+        .animate-slide-left { animation: slideLeft 0.6s ease-out forwards; }
+        .animate-scale-in { animation: scaleIn 0.4s ease-out forwards; }
+        .animate-pulse-slow { animation: pulse 2s ease-in-out infinite; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+        .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+        .stagger-3 { animation-delay: 0.3s; opacity: 0; }
+        .stagger-4 { animation-delay: 0.4s; opacity: 0; }
+        .stagger-5 { animation-delay: 0.5s; opacity: 0; }
+
+        .bg-gradient-emerald { background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-deep) 100%); }
+        .bg-gradient-gold { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); }
+        .bg-gradient-main { background: linear-gradient(180deg, #0D5C46 0%, #064E3B 50%, #022c22 100%); }
+
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: all 0.3s ease; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: 12px; font-weight: 600; font-size: 14px; transition: all 0.3s ease; cursor: pointer; border: none; outline: none; }
+        .btn-primary { background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-deep) 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(13, 92, 70, 0.3); }
+        .btn-gold { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #111827; }
+        .btn-outline { background: transparent; border: 2px solid var(--emerald-deep); color: var(--emerald-deep); }
+        .btn-outline:hover { background: var(--emerald-deep); color: white; }
+
+        .input { width: 100%; padding: 14px 16px; border: 2px solid #E5E7EB; border-radius: 12px; font-size: 15px; font-family: 'DM Sans', sans-serif; transition: all 0.3s ease; background: white; }
+        .input:focus { outline: none; border-color: var(--emerald); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+
+        .progress-bar { height: 8px; background: #E5E7EB; border-radius: 100px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--emerald) 0%, var(--gold) 100%); border-radius: 100px; transition: width 0.5s ease; }
+
+        .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; }
+        .badge-gold { background: rgba(212, 175, 55, 0.2); color: var(--gold-dark); }
+        .badge-emerald { background: rgba(16, 185, 129, 0.1); color: var(--emerald-deep); }
+
+        .streak-fire { background: linear-gradient(180deg, #FF6B35 0%, #F7931E 50%, #FFD700 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 16px; border-radius: 12px; color: #6B7280; transition: all 0.3s ease; cursor: pointer; font-size: 12px; font-weight: 500; }
+        .nav-item:hover { color: var(--emerald-deep); background: rgba(16, 185, 129, 0.1); }
+        .nav-item.active { color: var(--emerald-deep); background: rgba(16, 185, 129, 0.15); }
+
+        .chat-bubble { max-width: 85%; padding: 14px 18px; border-radius: 18px; font-size: 14px; line-height: 1.6; }
+        .chat-user { background: var(--emerald-deep); color: white; border-bottom-right-radius: 4px; margin-left: auto; }
+        .chat-ai { background: #F3F4F6; color: #1F2937; border-bottom-left-radius: 4px; }
+
+        .surah-item { display: flex; align-items: center; gap: 16px; padding: 14px 16px; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; }
+        .surah-item:hover { background: #F9FAFB; }
+        .surah-item.active { background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--emerald); }
+
+        .audio-wave { display: flex; align-items: center; gap: 3px; height: 24px; }
+        .audio-wave span { width: 4px; background: var(--gold); border-radius: 2px; animation: wave 0.5s ease-in-out infinite; }
+        .audio-wave.paused span { animation-play-state: paused; height: 8px; }
+        .audio-wave span:nth-child(2) { animation-delay: 0.1s; }
+        .audio-wave span:nth-child(3) { animation-delay: 0.2s; }
+        .audio-wave span:nth-child(4) { animation-delay: 0.3s; }
+        .audio-wave span:nth-child(5) { animation-delay: 0.4s; }
+
+        .achievement-badge { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .achievement-locked { background: #E5E7EB; color: #9CA3AF; }
+        .achievement-unlocked { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: white; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+
+        .shimmer-bg {
+            background: linear-gradient(90deg, rgba(212,175,55,0.1) 25%, rgba(212,175,55,0.3) 50%, rgba(212,175,55,0.1) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        /* Logo Styles */
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #0D5C46 0%, #064E3B 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(13, 92, 70, 0.3);
+        }
+        
+        .logo-books {
+            position: relative;
+            width: 24px;
+            height: 24px;
+        }
+        
+        .logo-book {
+            position: absolute;
+            width: 18px;
+            height: 22px;
+            background: white;
+            border-radius: 2px 4px 4px 2px;
+            box-shadow: inset -2px 0 4px rgba(0,0,0,0.1);
+        }
+        
+        .logo-book::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 2px;
+            bottom: 2px;
+            width: 3px;
+            background: rgba(13, 92, 70, 0.3);
+            border-radius: 1px;
+        }
+        
+        .logo-book:nth-child(1) {
+            left: 0;
+            z-index: 1;
+        }
+        
+        .logo-book:nth-child(2) {
+            left: 4px;
+            z-index: 2;
+            background: rgba(255,255,255,0.9);
+        }
+        
+        .logo-book:nth-child(3) {
+            left: 8px;
+            z-index: 3;
+            background: rgba(255,255,255,0.8);
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .logo-title {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1F2937;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-subtitle {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            color: #6B7280;
+            letter-spacing: 0.2px;
+        }
+
+        @media (max-width: 768px) {
+            .desktop-only { display: none !important; }
+            .mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid #E5E7EB; padding: 8px 0; z-index: 50; }
+        }
+        @media (min-width: 769px) {
+            .mobile-only { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        // ===== DATA QURAN =====
+        const quranData = [
+            { no: 1, name: "Al-Fatihah", arabic: "الفاتحة", ayat: 7, type: "Makkiyah", meaning: "Pembukaan", juz: 1 },
+            { no: 2, name: "Al-Baqarah", arabic: "البقرة", ayat: 286, type: "Madaniyah", meaning: "Sapi Betina", juz: 1 },
+            { no: 3, name: "Ali Imran", arabic: "آل عمران", ayat: 200, type: "Madaniyah", meaning: "Keluarga Imran", juz: 3 },
+            { no: 4, name: "An-Nisa", arabic: "النساء", ayat: 176, type: "Madaniyah", meaning: "Wanita", juz: 4 },
+            { no: 5, name: "Al-Maidah", arabic: "المائدة", ayat: 120, type: "Madaniyah", meaning: "Jamuan", juz: 6 },
+            { no: 6, name: "Al-An'am", arabic: "الأنعام", ayat: 165, type: "Makkiyah", meaning: "Binatang Ternak", juz: 6 },
+            { no: 7, name: "Al-A'raf", arabic: "الأعراف", ayat: 206, type: "Makkiyah", meaning: "Tempat Tertinggi", juz: 7 },
+            { no: 8, name: "Al-Anfal", arabic: "الأنفال", ayat: 75, type: "Madaniyah", meaning: "Harta Rampasan", juz: 9 },
+            { no: 9, name: "At-Taubah", arabic: "التوبة", ayat: 129, type: "Madaniyah", meaning: "Pengampunan", juz: 9 },
+            { no: 10, name: "Yunus", arabic: "يونس", ayat: 109, type: "Makkiyah", meaning: "Nabi Yunus", juz: 10 },
+            { no: 11, name: "Hud", arabic: "هود", ayat: 123, type: "Makkiyah", meaning: "Nabi Hud", juz: 11 },
+            { no: 12, name: "Yusuf", arabic: "يوسف", ayat: 111, type: "Makkiyah", meaning: "Nabi Yusuf", juz: 12 },
+            { no: 13, name: "Ar-Ra'd", arabic: "الرعد", ayat: 43, type: "Madaniyah", meaning: "Petir", juz: 12 },
+            { no: 14, name: "Ibrahim", arabic: "إبراهيم", ayat: 52, type: "Makkiyah", meaning: "Nabi Ibrahim", juz: 13 },
+            { no: 15, name: "Al-Hijr", arabic: "الحجر", ayat: 99, type: "Makkiyah", meaning: "Daerah Berbatu", juz: 13 },
+            { no: 16, name: "An-Nahl", arabic: "النحل", ayat: 128, type: "Makkiyah", meaning: "Lebah", juz: 14 },
+            { no: 17, name: "Al-Isra", arabic: "الإسراء", ayat: 111, type: "Makkiyah", meaning: "Perjalanan Malam", juz: 15 },
+            { no: 18, name: "Al-Kahf", arabic: "الكهف", ayat: 110, type: "Makkiyah", meaning: "Penghuni Gua", juz: 15 },
+            { no: 19, name: "Maryam", arabic: "مريم", ayat: 98, type: "Makkiyah", meaning: "Maryam", juz: 16 },
+            { no: 20, name: "Ta-Ha", arabic: "طه", ayat: 135, type: "Makkiyah", meaning: "Ta-Ha", juz: 16 },
+            { no: 21, name: "Al-Anbiya", arabic: "الأنبياء", ayat: 112, type: "Makkiyah", meaning: "Para Nabi", juz: 17 },
+            { no: 22, name: "Al-Hajj", arabic: "الحج", ayat: 78, type: "Madaniyah", meaning: "Haji", juz: 17 },
+            { no: 23, name: "Al-Mu'minun", arabic: "المؤمنون", ayat: 118, type: "Makkiyah", meaning: "Orang Beriman", juz: 18 },
+            { no: 24, name: "An-Nur", arabic: "النور", ayat: 64, type: "Madaniyah", meaning: "Cahia", juz: 18 },
+            { no: 25, name: "Al-Furqan", arabic: "الفرقان", ayat: 77, type: "Makkiyah", meaning: "Pembeda", juz: 18 },
+            { no: 26, name: "Ash-Shu'ara", arabic: "الشعراء", ayat: 227, type: "Makkiyah", meaning: "Penyair", juz: 19 },
+            { no: 27, name: "An-Naml", arabic: "النمل", ayat: 93, type: "Makkiyah", meaning: "Semut", juz: 19 },
+            { no: 28, name: "Al-Qasas", arabic: "القصص", ayat: 88, type: "Makkiyah", meaning: "Kisah-kisah", juz: 20 },
+            { no: 29, name: "Al-Ankabut", arabic: "العنكبوت", ayat: 69, type: "Makkiyah", meaning: "Laba-laba", juz: 20 },
+            { no: 30, name: "Ar-Rum", arabic: "الروم", ayat: 60, type: "Makkiyah", meaning: "Romawi", juz: 21 },
+            { no: 31, name: "Luqman", arabic: "لقمان", ayat: 34, type: "Makkiyah", meaning: "Luqman", juz: 21 },
+            { no: 32, name: "As-Sajdah", arabic: "السجدة", ayat: 30, type: "Makkiyah", meaning: "Sujud", juz: 21 },
+            { no: 33, name: "Al-Ahzab", arabic: "الأحزاب", ayat: 73, type: "Madaniyah", meaning: "Golongan", juz: 21 },
+            { no: 34, name: "Saba", arabic: "سبأ", ayat: 54, type: "Makkiyah", meaning: "Saba'", juz: 22 },
+            { no: 35, name: "Fatir", arabic: "فاطر", ayat: 45, type: "Makkiyah", meaning: "Pencipta", juz: 22 },
+            { no: 36, name: "Yasin", arabic: "يس", ayat: 83, type: "Makkiyah", meaning: "Yasin", juz: 22 },
+            { no: 37, name: "As-Saffat", arabic: "الصافات", ayat: 182, type: "Makkiyah", meaning: "Barisan", juz: 23 },
+            { no: 38, name: "Sad", arabic: "ص", ayat: 88, type: "Makkiyah", meaning: "Sad", juz: 23 },
+            { no: 39, name: "Az-Zumar", arabic: "الزمر", ayat: 75, type: "Makkiyah", meaning: "Rombongan", juz: 23 },
+            { no: 40, name: "Ghafir", arabic: "غافر", ayat: 85, type: "Makkiyah", meaning: "Mengampuni", juz: 24 },
+            { no: 41, name: "Fussilat", arabic: "فصلت", ayat: 54, type: "Makkiyah", meaning: "Dijelaskan", juz: 24 },
+            { no: 42, name: "Ash-Shura", arabic: "الشورى", ayat: 53, type: "Makkiyah", meaning: "Musyawarah", juz: 25 },
+            { no: 43, name: "Az-Zukhruf", arabic: "الزخرف", ayat: 89, type: "Makkiyah", meaning: "Perhiasan", juz: 25 },
+            { no: 44, name: "Ad-Dukhan", arabic: "الدخان", ayat: 59, type: "Makkiyah", meaning: "Kabut", juz: 25 },
+            { no: 45, name: "Al-Jathiyah", arabic: "الجاثية", ayat: 37, type: "Makkiyah", meaning: "Berlutut", juz: 25 },
+            { no: 46, name: "Al-Ahqaf", arabic: "الأحقاف", ayat: 35, type: "Makkiyah", meaning: "Bukit Pasir", juz: 26 },
+            { no: 47, name: "Muhammad", arabic: "محمد", ayat: 38, type: "Madaniyah", meaning: "Muhammad", juz: 26 },
+            { no: 48, name: "Al-Fath", arabic: "الفتح", ayat: 29, type: "Madaniyah", meaning: "Kemenangan", juz: 26 },
+            { no: 49, name: "Al-Hujurat", arabic: "الحجرات", ayat: 18, type: "Madaniyah", meaning: "Kamar-kamar", juz: 26 },
+            { no: 50, name: "Qaf", arabic: "ق", ayat: 45, type: "Makkiyah", meaning: "Qaf", juz: 26 },
+            { no: 51, name: "Adz-Dzariyat", arabic: "الذاريات", ayat: 60, type: "Makkiyah", meaning: "Angin", juz: 26 },
+            { no: 52, name: "At-Tur", arabic: "الطور", ayat: 49, type: "Makkiyah", meaning: "Bukit", juz: 27 },
+            { no: 53, name: "An-Najm", arabic: "النجم", ayat: 62, type: "Makkiyah", meaning: "Bintang", juz: 27 },
+            { no: 54, name: "Al-Qamar", arabic: "القمر", ayat: 55, type: "Makkiyah", meaning: "Bulan", juz: 27 },
+            { no: 55, name: "Ar-Rahman", arabic: "الرحمن", ayat: 78, type: "Madaniyah", meaning: "Maha Pengasih", juz: 27 },
+            { no: 56, name: "Al-Waqi'ah", arabic: "الواقعة", ayat: 96, type: "Makkiyah", meaning: "Hari Kiamat", juz: 27 },
+            { no: 57, name: "Al-Hadid", arabic: "الحديد", ayat: 29, type: "Madaniyah", meaning: "Besi", juz: 27 },
+            { no: 58, name: "Al-Mujadilah", arabic: "المجادلة", ayat: 22, type: "Madaniyah", meaning: "Wanita Menggugat", juz: 28 },
+            { no: 59, name: "Al-Hasyr", arabic: "الحشر", ayat: 24, type: "Madaniyah", meaning: "Pengusiran", juz: 28 },
+            { no: 60, name: "Al-Mumtahanah", arabic: "الممتحنة", ayat: 13, type: "Madaniyah", meaning: "Wanita Diuji", juz: 28 },
+            { no: 61, name: "Ash-Shaff", arabic: "الصف", ayat: 14, type: "Madaniyah", meaning: "Barisan", juz: 28 },
+            { no: 62, name: "Al-Jumu'ah", arabic: "الجمعة", ayat: 11, type: "Madaniyah", meaning: "Jumat", juz: 28 },
+            { no: 63, name: "Al-Munafiqun", arabic: "المنافقون", ayat: 11, type: "Madaniyah", meaning: "Munafik", juz: 28 },
+            { no: 64, name: "At-Taghabun", arabic: "التغابن", ayat: 18, type: "Madaniyah", meaning: "Pembalasan", juz: 28 },
+            { no: 65, name: "At-Talaq", arabic: "الطلاق", ayat: 12, type: "Madaniyah", meaning: "Talak", juz: 28 },
+            { no: 66, name: "At-Tahrim", arabic: "التحريم", ayat: 12, type: "Madaniyah", meaning: "Mengharamkan", juz: 28 },
+            { no: 67, name: "Al-Mulk", arabic: "الملك", ayat: 30, type: "Makkiyah", meaning: "Kerajaan", juz: 29 },
+            { no: 68, name: "Al-Qalam", arabic: "القلم", ayat: 52, type: "Makkiyah", meaning: "Pena", juz: 29 },
+            { no: 69, name: "Al-Haqqah", arabic: "الحاقة", ayat: 52, type: "Makkiyah", meaning: "Kiamat", juz: 29 },
+            { no: 70, name: "Al-Ma'arij", arabic: "المعارج", ayat: 44, type: "Makkiyah", meaning: "Tempat Naik", juz: 29 },
+            { no: 71, name: "Nuh", arabic: "نوح", ayat: 28, type: "Makkiyah", meaning: "Nuh", juz: 29 },
+            { no: 72, name: "Al-Jinn", arabic: "الجن", ayat: 28, type: "Makkiyah", meaning: "Jin", juz: 29 },
+            { no: 73, name: "Al-Muzzammil", arabic: "المزمل", ayat: 20, type: "Makkiyah", meaning: "Berselimut", juz: 29 },
+            { no: 74, name: "Al-Muddassir", arabic: "المدثر", ayat: 56, type: "Makkiyah", meaning: "Berkemul", juz: 29 },
+            { no: 75, name: "Al-Qiyamah", arabic: "القيامة", ayat: 40, type: "Makkiyah", meaning: "Berbangkit", juz: 29 },
+            { no: 76, name: "Al-Insan", arabic: "الإنسان", ayat: 31, type: "Madaniyah", meaning: "Manusia", juz: 29 },
+            { no: 77, name: "Al-Mursalat", arabic: "المرسلات", ayat: 50, type: "Makkiyah", meaning: "Ditiupkan", juz: 29 },
+            { no: 78, name: "An-Naba", arabic: "النبأ", ayat: 40, type: "Makkiyah", meaning: "Berita Besar", juz: 30 },
+            { no: 79, name: "An-Nazi'at", arabic: "النازعات", ayat: 46, type: "Makkiyah", meaning: "Pencabut", juz: 30 },
+            { no: 80, name: "Abasa", arabic: "عبس", ayat: 42, type: "Makkiyah", meaning: "Bermuka Masam", juz: 30 },
+            { no: 81, name: "At-Takwir", arabic: "التكوير", ayat: 29, type: "Makkiyah", meaning: "Menggulung", juz: 30 },
+            { no: 82, name: "Al-Infitar", arabic: "الانفطار", ayat: 19, type: "Makkiyah", meaning: "Terbelah", juz: 30 },
+            { no: 83, name: "Al-Mutaffifin", arabic: "المطففين", ayat: 36, type: "Makkiyah", meaning: "Curang", juz: 30 },
+            { no: 84, name: "Al-Insyiqaq", arabic: "الانشقاق", ayat: 25, type: "Makkiyah", meaning: "Terbelah", juz: 30 },
+            { no: 85, name: "Al-Buruj", arabic: "البروج", ayat: 22, type: "Makkiyah", meaning: "Bintang", juz: 30 },
+            { no: 86, name: "At-Tariq", arabic: "الطارق", ayat: 17, type: "Makkiyah", meaning: "Malam Hari", juz: 30 },
+            { no: 87, name: "Al-A'la", arabic: "الأعلى", ayat: 19, type: "Makkiyah", meaning: "Paling Tinggi", juz: 30 },
+            { no: 88, name: "Al-Ghasyiyah", arabic: "الغاشية", ayat: 26, type: "Makkiyah", meaning: "Pembalasan", juz: 30 },
+            { no: 89, name: "Al-Fajr", arabic: "الفجر", ayat: 30, type: "Makkiyah", meaning: "Fajar", juz: 30 },
+            { no: 90, name: "Al-Balad", arabic: "البلد", ayat: 20, type: "Makkiyah", meaning: "Negeri", juz: 30 },
+            { no: 91, name: "Asy-Syams", arabic: "الشمس", ayat: 15, type: "Makkiyah", meaning: "Matahari", juz: 30 },
+            { no: 92, name: "Al-Lail", arabic: "الليل", ayat: 21, type: "Makkiyah", meaning: "Malam", juz: 30 },
+            { no: 93, name: "Ad-Dhuha", arabic: "الضحى", ayat: 11, type: "Makkiyah", meaning: "Dhuha", juz: 30 },
+            { no: 94, name: "Al-Insyirah", arabic: "الشرح", ayat: 8, type: "Makkiyah", meaning: "Melapangkan", juz: 30 },
+            { no: 95, name: "At-Tin", arabic: "التين", ayat: 8, type: "Makkiyah", meaning: "Tin", juz: 30 },
+            { no: 96, name: "Al-Alaq", arabic: "العلق", ayat: 19, type: "Makkiyah", meaning: "Segumpal Darah", juz: 30 },
+            { no: 97, name: "Al-Qadr", arabic: "القدر", ayat: 5, type: "Makkiyah", meaning: "Kemuliaan", juz: 30 },
+            { no: 98, name: "Al-Bayyinah", arabic: "البينة", ayat: 8, type: "Madaniyah", meaning: "Bukti Nyata", juz: 30 },
+            { no: 99, name: "Az-Zalzalah", arabic: "الزلزلة", ayat: 8, type: "Madaniyah", meaning: "Kegoncangan", juz: 30 },
+            { no: 100, name: "Al-Adiyat", arabic: "العاديات", ayat: 11, type: "Makkiyah", meaning: "Berlari", juz: 30 },
+            { no: 101, name: "Al-Qari'ah", arabic: "القارعة", ayat: 11, type: "Makkiyah", meaning: "Kiamat", juz: 30 },
+            { no: 102, name: "At-Takatsur", arabic: "التكاثر", ayat: 8, type: "Makkiyah", meaning: "Bermegah", juz: 30 },
+            { no: 103, name: "Al-Asr", arabic: "العصر", ayat: 3, type: "Makkiyah", meaning: "Waktu Sore", juz: 30 },
+            { no: 104, name: "Al-Humazah", arabic: "الهمزة", ayat: 9, type: "Makkiyah", meaning: "Pengumpat", juz: 30 },
+            { no: 105, name: "Al-Fil", arabic: "الفيل", ayat: 5, type: "Makkiyah", meaning: "Gajah", juz: 30 },
+            { no: 106, name: "Quraisy", arabic: "قريش", ayat: 4, type: "Makkiyah", meaning: "Quraisy", juz: 30 },
+            { no: 107, name: "Al-Ma'un", arabic: "الماعون", ayat: 7, type: "Makkiyah", meaning: "Berguna", juz: 30 },
+            { no: 108, name: "Al-Kautsar", arabic: "الكوثر", ayat: 3, type: "Makkiyah", meaning: "Nikmat", juz: 30 },
+            { no: 109, name: "Al-Kafirun", arabic: "الكافرون", ayat: 6, type: "Makkiyah", meaning: "Kafir", juz: 30 },
+            { no: 110, name: "An-Nasr", arabic: "النصر", ayat: 3, type: "Madaniyah", meaning: "Pertolongan", juz: 30 },
+            { no: 111, name: "Al-Lahab", arabic: "اللهب", ayat: 5, type: "Makkiyah", meaning: "Api", juz: 30 },
+            { no: 112, name: "Al-Ikhlas", arabic: "الإخلاص", ayat: 4, type: "Makkiyah", meaning: "Ikhlas", juz: 30 },
+            { no: 113, name: "Al-Falaq", arabic: "الفلق", ayat: 5, type: "Makkiyah", meaning: "Subuh", juz: 30 },
+            { no: 114, name: "An-Nas", arabic: "الناس", ayat: 6, type: "Makkiyah", meaning: "Manusia", juz: 30 }
+        ];
+
+        const reciters = [
+            { id: "ar.alafasy", name: "Mishary Al-Afasy" },
+            { id: "ar.abdulsamad", name: "Abdul Basit" },
+            { id: "ar.husary", name: "Al-Husary" }
+        ];
+
+        const islamicQuotes = [
+            "Sesungguhnya bersama kesulitan ada kemudahan. (QS. Al-Insyirah: 6)",
+            "Dan Allah mencintai orang yang bertawakal kepada-Nya. (QS. Ali Imran: 159)",
+            "Janganlah kamu bersikap lemah, dan janganlah pula kamu bersedih hati. (QS. Ali Imran: 139)",
+            "Sesungguhnya Allah tidak mengubah keadaan suatu kaum sehingga mereka mengubah keadaan yang ada pada diri mereka sendiri. (QS. Ar-Ra'd: 11)",
+            "Dan barangsiapa bertawakal kepada Allah, niscaya Allah akan mencukupkan keperluannya. (QS. At-Talaq: 3)",
+            "Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya. (HR. Ahmad)",
+            "Ilmu tanpa amal bagaikan pohon tanpa buah. (Imam Al-Ghazali)",
+            "Barangsiapa menempuh jalan untuk mencari ilmu, maka Allah akan memudahkan baginya jalan ke surga. (HR. Muslim)"
+        ];
+
+        // ===== STATE =====
+        const DB_KEY = 'hafalanku_v4';
+        let currentUser = null;
+        let currentPage = 'login';
+        let currentSurah = null;
+        let isPlaying = false;
+        let currentAudio = null;
+        let currentAyah = 1;
+        let selectedReciter = reciters[0].id;
+        let chatMessages = [];
+        let isTyping = false;
+
+        const defaultUser = {
+            username: '', password: '', birthDate: '',
+            streak: 0, maxStreak: 0, lastActive: null,
+            xp: 0, level: 1, levelTitle: 'Santri Pemula',
+            totalMinutes: 0, surahsListened: [], ayatSetor: 0,
+            achievements: [], completedDays: []
+        };
+
+        const levelTitles = [
+            { level: 1, title: 'Santri Pemula', minXP: 0 },
+            { level: 2, title: 'Santri Belajar', minXP: 100 },
+            { level: 3, title: 'Santri Rajin', minXP: 300 },
+            { level: 4, title: 'Penghafal Cilik', minXP: 600 },
+            { level: 5, title: 'Penghafal Muda', minXP: 1000 },
+            { level: 6, title: 'Hafidz Pemula', minXP: 1500 },
+            { level: 7, title: 'Hafidz Andalan', minXP: 2500 },
+            { level: 8, title: 'Hafidz Senior', minXP: 4000 },
+            { level: 9, title: 'Hafidz Master', minXP: 6000 },
+            { level: 10, title: 'Hafidz Elite', minXP: 10000 }
+        ];
+
+        const achievements = [
+            { id: 'first_login', title: 'Langkah Pertama', icon: '🎯', xp: 50 },
+            { id: 'streak_3', title: 'Konsisten', icon: '🔥', xp: 100 },
+            { id: 'streak_7', title: 'Pekerja Keras', icon: '💪', xp: 200 },
+            { id: 'surah_10', title: 'Penghafal', icon: '📖', xp: 300 },
+            { id: 'chat_ai', title: 'Penanya', icon: '💬', xp: 50 },
+            { id: 'first_setor', title: 'Setor Pertama', icon: '🎤', xp: 150 }
+        ];
+
+        // ===== UTILS =====
+        function getDB() {
+            const data = localStorage.getItem(DB_KEY);
+            return data ? JSON.parse(data) : { users: [] };
+        }
+
+        function saveDB(db) {
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+        }
+
+        function getToday() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function addXP(amount) {
+            currentUser.xp += amount;
+            const newLevel = levelTitles.filter(l => l.minXP <= currentUser.xp).pop();
+            currentUser.level = newLevel.level;
+            currentUser.levelTitle = newLevel.title;
+            saveUserData();
+        }
+
+        function unlockAchievement(id) {
+            if (!currentUser.achievements.includes(id)) {
+                currentUser.achievements.push(id);
+                const achievement = achievements.find(a => a.id === id);
+                if (achievement) addXP(achievement.xp);
+                saveUserData();
+            }
+        }
+
+        function updateStreak() {
+            const today = getToday();
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toISOString().split('T')[0];
+            
+            if (currentUser.lastActive === today) {
+            } else if (currentUser.lastActive === yesterdayStr) {
+                currentUser.streak++;
+                if (currentUser.streak > currentUser.maxStreak) currentUser.maxStreak = currentUser.streak;
+            } else {
+                currentUser.streak = 1;
+            }
+            
+            currentUser.lastActive = today;
+            if (!currentUser.completedDays.includes(today)) currentUser.completedDays.push(today);
+            saveUserData();
+            
+            if (currentUser.streak >= 3) unlockAchievement('streak_3');
+            if (currentUser.streak >= 7) unlockAchievement('streak_7');
+        }
+
+        function saveUserData() {
+            const db = getDB();
+            const idx = db.users.findIndex(u => u.username === currentUser.username);
+            if (idx !== -1) db.users[idx] = currentUser;
+            saveDB(db);
+        }
+
+        function getAyahNumber(surahNumber, ayahNumber) {
+            let total = 0;
+            for (let i = 0; i < surahNumber - 1; i++) total += quranData[i].ayat;
+            return total + ayahNumber;
+        }
+
+        // ===== LOGO COMPONENT =====
+        function renderLogo() {
+            return `
+                <div class="flex items-center gap-3">
+                    <div class="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <!-- Book 1 (back) -->
+                            <rect x="2" y="3" width="14" height="18" rx="1.5" fill="white" fill-opacity="0.7"/>
+                            <!-- Book 2 (middle) -->
+                            <rect x="5" y="3" width="14" height="18" rx="1.5" fill="white" fill-opacity="0.85"/>
+                            <!-- Book 3 (front) -->
+                            <rect x="8" y="3" width="14" height="18" rx="1.5" fill="white"/>
+                            <!-- Spine lines -->
+                            <rect x="10" y="6" width="2" height="12" rx="1" fill="#0D5C46" fill-opacity="0.15"/>
+                            <!-- Decorative lines on book -->
+                            <rect x="13" y="7" width="6" height="1.5" rx="0.75" fill="#0D5C46" fill-opacity="0.2"/>
+                            <rect x="13" y="10.5" width="6" height="1.5" rx="0.75" fill="#0D5C46" fill-opacity="0.15"/>
+                            <rect x="13" y="14" width="4" height="1.5" rx="0.75" fill="#0D5C46" fill-opacity="0.1"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-title">Hafalanku</span>
+                        <span class="logo-subtitle">Platform Hafalan Quran</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ===== NAVIGATION HELPER =====
+        window.navigateTo = function(page) {
+            currentPage = page;
+            render();
+        };
+
+        // ===== AUDIO =====
+        function playAyah(surahNumber, ayahNumber) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+            }
+
+            const ayahGlobal = getAyahNumber(surahNumber, ayahNumber);
+            const audioUrl = `https://cdn.islamic.network/quran/audio/128/${selectedReciter}/${ayahGlobal}.mp3`;
+            
+            currentAudio = new Audio(audioUrl);
+            
+            currentAudio.onplay = () => {
+                isPlaying = true;
+                render();
+                fetchAyahText(surahNumber, ayahNumber);
+            };
+            
+            currentAudio.onended = () => {
+                if (currentSurah && currentAyah < currentSurah.ayat) {
+                    currentAyah++;
+                    playAyah(currentSurah.no, currentAyah);
+                } else {
+                    isPlaying = false;
+                    onSurahComplete();
+                    render();
+                }
+            };
+            
+            currentAudio.onerror = () => {
+                const status = document.getElementById('audioStatus');
+                if (status) status.textContent = 'Gagal memuat audio...';
+            };
+            
+            currentAudio.play().catch(() => {
+                const status = document.getElementById('audioStatus');
+                if (status) status.textContent = 'Klik play untuk mulai';
+            });
+        }
+
+        function fetchAyahText(surahNumber, ayahNumber) {
+            const ayahGlobal = getAyahNumber(surahNumber, ayahNumber);
+            fetch(`https://api.alquran.cloud/v1/ayah/${ayahGlobal}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.code === 200) {
+                        const display = document.getElementById('currentAyahDisplay');
+                        if (display) {
+                            display.innerHTML = `<p class="font-arabic text-3xl text-emerald-800 leading-loose mb-4" dir="rtl">${data.data.text}</p><p class="text-sm text-gray-500">${surahNumber}:${ayahNumber}</p>`;
+                        }
+                    }
+                }).catch(() => {});
+        }
+
+        function onSurahComplete() {
+            currentUser.totalMinutes += Math.ceil(currentSurah.ayat * 0.5);
+            addXP(20);
+            if (!currentUser.surahsListened.includes(currentSurah.no)) {
+                currentUser.surahsListened.push(currentSurah.no);
+                saveUserData();
+                if (currentUser.surahsListened.length >= 10) unlockAchievement('surah_10');
+            }
+            updateStreak();
+        }
+
+        // ===== RENDER =====
+        function render() {
+            const app = document.getElementById('app');
+            if (!currentUser) {
+                app.innerHTML = renderAuth();
+            } else {
+                app.innerHTML = renderSidebar() + renderMain() + renderMobileNav();
+            }
+            attachEvents();
+        }
+
+        function renderAuth() {
+            const isLogin = currentPage === 'login';
+            return `
+                <div class="min-h-screen bg-gradient-main flex items-center justify-center p-4">
+                    <div class="w-full max-w-md animate-scale-in">
+                        <div class="text-center mb-8">
+                            <div class="inline-flex items-center gap-3 mb-4">
+                                <div class="logo-icon" style="width: 56px; height: 56px; border-radius: 14px;">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                        <rect x="2" y="3" width="14" height="18" rx="1.5" fill="white" fill-opacity="0.7"/>
+                                        <rect x="5" y="3" width="14" height="18" rx="1.5" fill="white" fill-opacity="0.85"/>
+                                        <rect x="8" y="3" width="14" height="18" rx="1.5" fill="white"/>
+                                        <rect x="10" y="6" width="2" height="12" rx="1" fill="#0D5C46" fill-opacity="0.15"/>
+                                        <rect x="13" y="7" width="6" height="1.5" rx="0.75" fill="#0D5C46" fill-opacity="0.2"/>
+                                        <rect x="13" y="10.5" width="6" height="1.5" rx="0.75" fill="#0D5C46" fill-opacity="0.15"/>
+                                        <rect x="13" y="14" width="4" height="1.5" rx="0.75" fill="#0D5C46" fill-opacity="0.1"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <h1 class="font-display text-4xl font-bold text-white">Hafalanku</h1>
+                            <p class="text-emerald-200 text-sm mt-1">Platform Hafalan Al-Quran</p>
+                        </div>
+                        <div class="card p-8">
+                            <div class="flex mb-6">
+                                <button class="auth-tab flex-1 py-3 font-semibold ${isLogin ? 'text-emerald-700 border-b-2 border-emerald-500' : 'text-gray-400'}" data-page="login">Masuk</button>
+                                <button class="auth-tab flex-1 py-3 font-semibold ${!isLogin ? 'text-emerald-700 border-b-2 border-emerald-500' : 'text-gray-400'}" data-page="signup">Daftar</button>
+                            </div>
+                            ${isLogin ? `
+                                <form id="loginForm" class="space-y-4">
+                                    <input type="text" name="username" class="input" placeholder="Username" required>
+                                    <input type="password" name="password" class="input" placeholder="Password" required>
+                                    <button type="submit" class="btn btn-primary w-full">Masuk</button>
+                                </form>
+                            ` : `
+                                <form id="signupForm" class="space-y-4">
+                                    <input type="text" name="username" class="input" placeholder="Username" required>
+                                    <input type="password" name="password" class="input" placeholder="Password" required>
+                                    <input type="date" name="birthDate" class="input" required>
+                                    <button type="submit" class="btn btn-gold w-full">Daftar</button>
+                                </form>
+                            `}
+                            <p id="authError" class="text-red-500 text-sm text-center mt-4 hidden"></p>
+                        </div>
+                        <p class="text-center text-emerald-200 text-sm mt-4">Demo: demo / demo123</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSidebar() {
+            const menuItems = [
+                { id: 'dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', label: 'Dashboard' },
+                { id: 'quran', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', label: 'Al-Quran' },
+                { id: 'chat', icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z', label: 'AI Ustazah' },
+                { id: 'setor', icon: 'M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z', label: 'Setor Hafalan' },
+                { id: 'statistik', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z', label: 'Statistik' },
+                { id: 'islami', icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z', label: 'Fitur Islami' }
+            ];
+
+            return `
+                <aside class="desktop-only fixed left-0 top-0 bottom-0 w-64 bg-white border-r border-gray-200 z-40 flex flex-col">
+                    <div class="p-5 border-b border-gray-100">
+                        ${renderLogo()}
+                    </div>
+                    <nav class="flex-1 p-4 space-y-1">
+                        ${menuItems.map(item => `
+                            <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${currentPage === item.id ? 'bg-emerald-50 text-emerald-700 font-medium' : 'text-gray-600 hover:bg-gray-50'}" data-page="${item.id}">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.icon}"/></svg>
+                                ${item.label}
+                            </button>
+                        `).join('')}
+                    </nav>
+                    <div class="p-4 border-t">
+                        <p class="text-sm text-gray-600 mb-2">${currentUser.username}</p>
+                        <p class="text-xs text-emerald-600">${currentUser.levelTitle}</p>
+                        <button id="logoutBtn" class="btn btn-outline w-full mt-3 text-sm py-2">Keluar</button>
+                    </div>
+                </aside>
+            `;
+        }
+
+        function renderMobileNav() {
+            const navItems = ['dashboard', 'quran', 'chat', 'setor', 'islami'];
+            const icons = ['M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z', 'M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z', 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z'];
+            return `
+                <div class="mobile-only fixed bottom-0 left-0 right:0 bg-white border-t flex justify-around py-2">
+                    ${navItems.map((id, i) => `
+                        <button class="nav-item ${currentPage === id ? 'active' : ''}" data-page="${id}">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${icons[i]}"/></svg>
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function renderMain() {
+            const pages = {
+                dashboard: renderDashboard,
+                quran: renderQuran,
+                chat: renderChat,
+                setor: renderSetor,
+                statistik: renderStatistik,
+                islami: renderIslami
+            };
+            return `<main class="md:ml-64 pb-20 md:pb-8">${(pages[currentPage] || pages.dashboard)()}</main>`;
+        }
+
+        // ===== DASHBOARD RENDER =====
+        function renderDashboard() {
+            const progress = Math.min((currentUser.surahsListened.length / 114) * 100, 100);
+            const quote = islamicQuotes[Math.floor(Math.random() * islamicQuotes.length)];
+            
+            return `
+                <div class="p-4 md:p-8 space-y-6">
+                    <!-- Header -->
+                    <div class="animate-slide-down">
+                        <h1 class="font-display text-2xl md:text-3xl font-bold text-gray-800">Assalamu'alaikum, ${currentUser.username}</h1>
+                        <p class="text-gray-500">Semoga harimu penuh berkah</p>
+                    </div>
+                    
+                    <!-- Streak Card -->
+                    <div class="card p-6 bg-gradient-main text-white animate-slide-up stagger-1">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-emerald-200 text-sm">Daily Streak</p>
+                                <p class="text-5xl font-bold streak-fire">${currentUser.streak}</p>
+                                <p class="text-emerald-200 text-sm mt-1">Best: ${currentUser.maxStreak} hari</p>
+                            </div>
+                            <div class="text-6xl animate-pulse-slow">${currentUser.streak > 0 ? '🔥' : '💚'}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="card p-4 animate-slide-up stagger-2">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center mb-2">
+                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <p class="text-2xl font-bold text-gray-800">${currentUser.totalMinutes}</p>
+                            <p class="text-sm text-gray-500">Menit Ngaji</p>
+                        </div>
+                        <div class="card p-4 animate-slide-up stagger-3">
+                            <div class="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center mb-2">
+                                <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            </div>
+                            <p class="text-2xl font-bold text-gray-800">${currentUser.surahsListened.length}</p>
+                            <p class="text-sm text-gray-500">Surat Didengar</p>
+                        </div>
+                        <div class="card p-4 animate-slide-up stagger-4">
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center mb-2">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                            </div>
+                            <p class="text-2xl font-bold text-gray-800">${currentUser.ayatSetor}</p>
+                            <p class="text-sm text-gray-500">Ayat Disetor</p>
+                        </div>
+                        <div class="card p-4 animate-slide-up stagger-5">
+                            <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center mb-2">
+                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <p class="text-2xl font-bold text-gray-800">${currentUser.xp}</p>
+                            <p class="text-sm text-gray-500">XP Points</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress & Level -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="card p-6 animate-slide-left stagger-1">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-semibold text-gray-800">Progress Hafalan</h3>
+                                <span class="badge badge-emerald">${currentUser.surahsListened.length}/114</span>
+                            </div>
+                            <div class="progress-bar mb-2"><div class="progress-fill" style="width: ${progress}%"></div></div>
+                            <p class="text-sm text-gray-500">${progress.toFixed(1)}% selesai</p>
+                        </div>
+                        
+                        <div class="card p-6 animate-slide-left stagger-2">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-semibold text-gray-800">Level Anda</h3>
+                                <span class="badge badge-gold">Level ${currentUser.level}</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-16 h-16 rounded-2xl bg-gradient-gold flex items-center justify-center text-2xl font-bold text-gray-900">${currentUser.level}</div>
+                                <div class="flex-1">
+                                    <p class="font-bold text-gray-800">${currentUser.levelTitle}</p>
+                                    <p class="text-sm text-gray-500">${currentUser.xp} XP</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quote Harian -->
+                    <div class="card p-6 bg-gradient-to-br from-emerald-50 to-white border-l-4 border-emerald-500 animate-slide-up stagger-3">
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                            </div>
+                            <div>
+                                <p class="text-gray-700 italic mb-2">"${quote}"</p>
+                                <p class="text-sm text-emerald-600 font-medium">Quote Harian</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="animate-slide-up stagger-4">
+                        <h3 class="font-semibold text-gray-800 mb-3">Akses Cepat</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button onclick="navigateTo('quran')" class="card p-4 text-center hover:bg-emerald-50 transition-all group">
+                                <div class="w-12 h-12 mx-auto rounded-xl bg-emerald-100 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                </div>
+                                <p class="text-sm font-medium text-gray-700">Dengar Quran</p>
+                            </button>
+                            <button onclick="navigateTo('chat')" class="card p-4 text-center hover:bg-blue-50 transition-all group">
+                                <div class="w-12 h-12 mx-auto rounded-xl bg-blue-100 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                                </div>
+                                <p class="text-sm font-medium text-gray-700">AI Ustazah</p>
+                            </button>
+                            <button onclick="navigateTo('setor')" class="card p-4 text-center hover:bg-yellow-50 transition-all group">
+                                <div class="w-12 h-12 mx-auto rounded-xl bg-yellow-100 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                                </div>
+                                <p class="text-sm font-medium text-gray-700">Setor Hafalan</p>
+                            </button>
+                            <button onclick="navigateTo('islami')" class="card p-4 text-center hover:bg-purple-50 transition-all group">
+                                <div class="w-12 h-12 mx-auto rounded-xl bg-purple-100 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                                </div>
+                                <p class="text-sm font-medium text-gray-700">Fitur Islami</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderQuran() {
+            return `
+                <div class="p-4 md:p-8">
+                    <div class="flex justify-between items-center mb-4 animate-slide-down">
+                        <h1 class="font-display text-2xl font-bold text-gray-800">Al-Quran (114 Surat)</h1>
+                        <select id="qariSelect" class="input py-2 px-3 text-sm w-auto">
+                            ${reciters.map(r => `<option value="${r.id}" ${r.id === selectedReciter ? 'selected' : ''}>${r.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="card p-4 max-h-[70vh] overflow-y-auto">
+                            <input type="text" id="surahSearch" class="input mb-3" placeholder="Cari surat...">
+                            <div id="surahList" class="space-y-1">
+                                ${quranData.map(s => `
+                                    <div class="surah-item ${currentSurah && currentSurah.no === s.no ? 'active' : ''}" data-no="${s.no}">
+                                        <div class="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-sm">${s.no}</div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="font-medium text-gray-800">${s.name}</p>
+                                            <p class="text-xs text-gray-500">${s.arabic} - ${s.ayat} Ayat</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="md:col-span-2">
+                            ${currentSurah ? `
+                                <div class="card p-6 bg-gradient-main text-white animate-scale-in">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <div>
+                                            <h2 class="font-display text-3xl font-bold">${currentSurah.arabic}</h2>
+                                            <p class="text-emerald-200">${currentSurah.name} - ${currentSurah.ayat} Ayat</p>
+                                        </div>
+                                        <div class="audio-wave ${isPlaying ? '' : 'paused'}"><span></span><span></span><span></span><span></span><span></span></div>
+                                    </div>
+                                    <div class="flex items-center justify-center gap-4 mb-4">
+                                        <button id="prevBtn" class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                                        </button>
+                                        <button id="playBtn" class="w-16 h-16 rounded-full bg-yellow-400 flex items-center justify-center hover:bg-yellow-300">
+                                            <svg class="w-8 h-8 text-gray-900" fill="currentColor" viewBox="0 0 24 24">${isPlaying ? '<path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>' : '<path d="M8 5v14l11-7z"/>'}</svg>
+                                        </button>
+                                        <button id="nextBtn" class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                        </button>
+                                    </div>
+                                    <p class="text-center text-emerald-200 text-sm mb-2">Ayat ${currentAyah} dari ${currentSurah.ayat}</p>
+                                    <div class="h-2 bg-white/20 rounded-full overflow-hidden"><div class="h-full bg-yellow-400 rounded-full transition-all" style="width: ${(currentAyah / currentSurah.ayat) * 100}%"></div></div>
+                                    <p id="audioStatus" class="text-center text-emerald-200 text-sm mt-3"></p>
+                                </div>
+                                <div class="card p-6 mt-4">
+                                    <h3 class="font-semibold text-gray-800 mb-3">Ayat Sedang Diputar</h3>
+                                    <div id="currentAyahDisplay" class="text-center py-4"><p class="text-gray-400">Memuat...</p></div>
+                                </div>
+                            ` : `
+                                <div class="card p-12 text-center">
+                                    <div class="w-20 h-20 mx-auto rounded-2xl bg-emerald-100 flex items-center justify-center mb-4">
+                                        <svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+                                    </div>
+                                    <h3 class="font-display text-xl font-bold text-gray-800 mb-2">Pilih Surat</h3>
+                                    <p class="text-gray-500">Audio streaming dari api.alquran.cloud</p>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderChat() {
+            return `
+                <div class="p-4 md:p-8 h-[calc(100vh-80px)] flex flex-col">
+                    <div class="flex items-center gap-3 mb-4 animate-slide-down">
+                        <div class="w-12 h-12 rounded-full bg-gradient-emerald flex items-center justify-center text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                        </div>
+                        <div>
+                            <h1 class="font-display text-xl font-bold text-gray-800">AI Ustazah</h1>
+                            <p class="text-sm text-emerald-600">Tanya jawab Islam</p>
+                        </div>
+                    </div>
+                    <div id="chatBox" class="flex-1 overflow-y-auto space-y-4 mb-4 p-2">
+                        ${chatMessages.length === 0 ? `
+                            <div class="text-center py-8">
+                                <p class="text-gray-500 mb-4">Assalamu'alaikum, silakan bertanya tentang Islam.</p>
+                                <div class="flex flex-wrap gap-2 justify-center">
+                                    <button class="quick-q btn btn-outline text-sm" data-q="Rukun Islam">Rukun Islam</button>
+                                    <button class="quick-q btn btn-outline text-sm" data-q="Tajwid dasar">Tajwid</button>
+                                    <button class="quick-q btn btn-outline text-sm" data-q="Adab dalam Islam">Adab Islam</button>
+                                </div>
+                            </div>
+                        ` : chatMessages.map(m => `
+                            <div class="flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}">
+                                <div class="chat-bubble ${m.role === 'user' ? 'chat-user' : 'chat-ai'}">${m.content.replace(/\n/g, '<br>')}</div>
+                            </div>
+                        `).join('')}
+                        ${isTyping ? '<div class="flex justify-start"><div class="chat-bubble chat-ai">Mengetik...</div></div>' : ''}
+                    </div>
+                    <form id="chatForm" class="flex gap-2">
+                        <input type="text" id="chatInput" class="input flex-1" placeholder="Ketik pertanyaan..." autocomplete="off">
+                        <button type="submit" class="btn btn-primary px-6">Kirim</button>
+                    </form>
+                </div>
+            `;
+        }
+
+        function renderSetor() {
+            return `
+                <div class="p-4 md:p-8">
+                    <h1 class="font-display text-2xl font-bold text-gray-800 mb-4 animate-slide-down">Setor Hafalan</h1>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="card p-6 animate-slide-up">
+                            <h3 class="font-semibold text-gray-800 mb-4">Pilih Surat</h3>
+                            <select id="setorSelect" class="input mb-4">
+                                <option value="">Pilih Surat...</option>
+                                ${quranData.map(s => `<option value="${s.no}">${s.no}. ${s.name}</option>`).join('')}
+                            </select>
+                            <button id="recordBtn" class="w-32 h-32 mx-auto rounded-full bg-gradient-emerald flex items-center justify-center text-white">
+                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                            </button>
+                            <p class="text-center text-gray-500 mt-4">Tekan untuk rekam</p>
+                        </div>
+                        <div class="card p-6 animate-slide-up stagger-1">
+                            <h3 class="font-semibold text-gray-800 mb-4">Hasil Evaluasi</h3>
+                            <div id="setorResult" class="text-center py-8 text-gray-400">
+                                <p>Hasil akan muncul di sini</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStatistik() {
+            return `
+                <div class="p-4 md:p-8">
+                    <h1 class="font-display text-2xl font-bold text-gray-800 mb-4">Statistik</h1>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="card p-4"><p class="text-2xl font-bold">${currentUser.totalMinutes}</p><p class="text-sm text-gray-500">Menit</p></div>
+                        <div class="card p-4"><p class="text-2xl font-bold">${currentUser.surahsListened.length}</p><p class="text-sm text-gray-500">Surat</p></div>
+                        <div class="card p-4"><p class="text-2xl font-bold">${currentUser.ayatSetor}</p><p class="text-sm text-gray-500">Ayat</p></div>
+                        <div class="card p-4"><p class="text-2xl font-bold">${currentUser.maxStreak}</p><p class="text-sm text-gray-500">Best Streak</p></div>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="font-semibold mb-4">Pencapaian</h3>
+                        <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
+                            ${achievements.map(a => {
+                                const unlocked = currentUser.achievements.includes(a.id);
+                                return `<div class="text-center"><div class="achievement-badge mx-auto ${unlocked ? 'achievement-unlocked' : 'achievement-locked'}">${a.icon}</div><p class="text-xs mt-2">${a.title}</p></div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderIslami() {
+            return `
+                <div class="p-4 md:p-8">
+                    <h1 class="font-display text-2xl font-bold text-gray-800 mb-4">Fitur Islami</h1>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="card p-6">
+                            <h3 class="font-semibold mb-4">Jadwal Sholat</h3>
+                            <div class="grid grid-cols-5 gap-2 text-center">
+                                ${['Subuh 04:35', 'Dzuhur 11:55', 'Ashar 15:15', 'Maghrib 18:05', 'Isya 19:15'].map(s => `<div class="p-2 bg-emerald-50 rounded-lg text-xs">${s}</div>`).join('')}
+                            </div>
+                        </div>
+                        <div class="card p-6">
+                            <h3 class="font-semibold mb-4">Dzikir</h3>
+                            <div class="space-y-2">
+                                ${['Subhanallah 33x', 'Alhamdulillah 33x', 'Allahu Akbar 33x'].map(d => `<div class="p-3 bg-gray-50 rounded-lg text-sm">${d}</div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ===== AI RESPONSE =====
+        function getAIResponse(q) {
+            q = q.toLowerCase();
+            if (q.includes('rukun islam')) {
+                return `Rukun Islam ada 5:\n\n1. Syahadat\n2. Sholat\n3. Puasa Ramadhan\n4. Zakat\n5. Haji bagi yang mampu\n\nIni adalah pondasi keislaman seseorang.`;
+            }
+            if (q.includes('tajwid')) {
+                return `Hukum Tajwid Nun Mati & Tanwin:\n\n1. Idzhar: Dibaca jelas (ء ه ع ح غ خ)\n2. Idgham: Disatukan (ي ن م و ر ل)\n3. Iqlab: Diubah ke mim (ب)\n4. Ikhfa: Disamar-samarkan (huruf lainnya)\n\nWaktu baca: 2 harakat.`;
+            }
+            if (q.includes('adab')) {
+                return `Adab dalam Islam:\n\n- Adab kepada Allah: Taat & bertauhid\n- Adab kepada orang tua: Berbakti & lemah lembut\n- Adab kepada sesama: Sopan & jujur\n- Adab menuntut ilmu: Tawadhu & mengamalkan\n\n"Sebaik-baik manusia adalah yang paling baik akhlaknya." (HR. Tirmidzi)`;
+            }
+            return `Jazakallahu khairan. Saya AI Ustazah, siap membantu Anda tentang:\n\n- Al-Quran & Tajwid\n- Hadits & Fiqih\n- Akhlaq & Adab\n- Doa & Dzikir\n\nSilakan bertanya lebih spesifik.`;
+        }
+
+        // ===== EVENTS =====
+        function attachEvents() {
+            // Auth
+            document.querySelectorAll('.auth-tab').forEach(t => t.addEventListener('click', () => { currentPage = t.dataset.page; render(); }));
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) loginForm.addEventListener('submit', e => {
+                e.preventDefault();
+                const fd = new FormData(loginForm);
+                const db = getDB();
+                const user = db.users.find(u => u.username === fd.get('username') && u.password === fd.get('password'));
+                if (user) { currentUser = user; updateStreak(); unlockAchievement('first_login'); currentPage = 'dashboard'; render(); }
+                else { const err = document.getElementById('authError'); if(err) { err.textContent = 'Login gagal'; err.classList.remove('hidden'); } }
+            });
+            const signupForm = document.getElementById('signupForm');
+            if (signupForm) signupForm.addEventListener('submit', e => {
+                e.preventDefault();
+                const fd = new FormData(signupForm);
+                const db = getDB();
+                if (db.users.find(u => u.username === fd.get('username'))) { const err = document.getElementById('authError'); if(err) { err.textContent = 'Username sudah ada'; err.classList.remove('hidden'); } return; }
+                const newUser = { ...defaultUser, username: fd.get('username'), password: fd.get('password'), birthDate: fd.get('birthDate') };
+                db.users.push(newUser); saveDB(db);
+                currentUser = newUser; unlockAchievement('first_login'); currentPage = 'dashboard'; render();
+            });
+
+            // Nav
+            document.querySelectorAll('[data-page]').forEach(btn => btn.addEventListener('click', () => { if(btn.dataset.page === 'login' || btn.dataset.page === 'signup') { if(!currentUser) { currentPage = btn.dataset.page; render(); } } else if(currentUser) { currentPage = btn.dataset.page; render(); } }));
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) logoutBtn.addEventListener('click', () => { if(currentAudio) currentAudio.pause(); currentUser = null; currentPage = 'login'; render(); });
+
+            // Quran
+            document.querySelectorAll('.surah-item').forEach(item => item.addEventListener('click', () => {
+                const no = parseInt(item.dataset.no);
+                currentSurah = quranData.find(s => s.no === no);
+                currentAyah = 1;
+                isPlaying = false;
+                if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+                render();
+            }));
+
+            const surahSearch = document.getElementById('surahSearch');
+            if (surahSearch) surahSearch.addEventListener('input', e => {
+                const q = e.target.value.toLowerCase();
+                document.querySelectorAll('.surah-item').forEach(item => {
+                    const name = item.querySelector('.font-medium').textContent.toLowerCase();
+                    item.style.display = name.includes(q) ? 'flex' : 'none';
+                });
+            });
+
+            const qariSelect = document.getElementById('qariSelect');
+            if (qariSelect) qariSelect.addEventListener('change', e => {
+                selectedReciter = e.target.value;
+                if (isPlaying && currentSurah) playAyah(currentSurah.no, currentAyah);
+            });
+
+            const playBtn = document.getElementById('playBtn');
+            if (playBtn) playBtn.addEventListener('click', () => {
+                if (!currentSurah) return;
+                if (isPlaying) { if (currentAudio) currentAudio.pause(); isPlaying = false; render(); }
+                else { playAyah(currentSurah.no, currentAyah); }
+            });
+
+            const prevBtn = document.getElementById('prevBtn');
+            if (prevBtn) prevBtn.addEventListener('click', () => { if (currentSurah && currentAyah > 1) { currentAyah--; playAyah(currentSurah.no, currentAyah); } });
+            const nextBtn = document.getElementById('nextBtn');
+            if (nextBtn) nextBtn.addEventListener('click', () => { if (currentSurah && currentAyah < currentSurah.ayat) { currentAyah++; playAyah(currentSurah.no, currentAyah); } });
+
+            // Chat
+            const chatForm = document.getElementById('chatForm');
+            if (chatForm) chatForm.addEventListener('submit', e => {
+                e.preventDefault();
+                const input = document.getElementById('chatInput');
+                if (!input || !input.value.trim()) return;
+                chatMessages.push({ role: 'user', content: input.value.trim() });
+                input.value = '';
+                isTyping = true; render();
+                setTimeout(() => {
+                    const resp = getAIResponse(chatMessages[chatMessages.length - 1].content);
+                    chatMessages.push({ role: 'assistant', content: resp });
+                    isTyping = false; unlockAchievement('chat_ai'); render();
+                    const box = document.getElementById('chatBox'); if(box) box.scrollTop = box.scrollHeight;
+                }, 1200);
+            });
+
+            document.querySelectorAll('.quick-q').forEach(btn => btn.addEventListener('click', () => {
+                const q = btn.dataset.q;
+                chatMessages.push({ role: 'user', content: q });
+                isTyping = true; render();
+                setTimeout(() => {
+                    chatMessages.push({ role: 'assistant', content: getAIResponse(q) });
+                    isTyping = false; render();
+                }, 1000);
+            }));
+
+            // Setor
+            const recordBtn = document.getElementById('recordBtn');
+            if (recordBtn) recordBtn.addEventListener('click', () => {
+                const result = document.getElementById('setorResult');
+                if (result) {
+                    result.innerHTML = '<div class="animate-pulse text-center">Merekam 5 detik...</div>';
+                    setTimeout(() => {
+                        const score = Math.floor(Math.random() * 20) + 80;
+                        currentUser.ayatSetor += 5; addXP(30); unlockAchievement('first_setor'); saveUserData();
+                        result.innerHTML = `<div class="animate-scale-in"><div class="w-24 h-24 mx-auto rounded-full bg-gradient-gold flex items-center justify-center mb-4 text-3xl font-bold text-gray-900">${score}</div><p class="font-bold text-lg">Masya Allah! Nilai ${score}</p><p class="text-sm text-gray-500">+30 XP, +5 Ayat</p></div>`;
+                    }, 5000);
+                }
+            });
+        }
+
+        // ===== INIT =====
+        function init() {
+            const db = getDB();
+            if (!db.users.find(u => u.username === 'demo')) {
+                const demo = { ...defaultUser, username: 'demo', password: 'demo123', birthDate: '2000-01-01', streak: 5, maxStreak: 10, xp: 250, level: 2, levelTitle: 'Santri Belajar', totalMinutes: 120, surahsListened: [1, 112, 113, 114], ayatSetor: 20 };
+                db.users.push(demo); saveDB(db);
+            }
+            render();
+        }
+
+        init();
+    </script>
+</body>
+</html>
